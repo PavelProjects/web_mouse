@@ -8,8 +8,10 @@ MODEL_CONF = 0.5
 CNTR_AVERAGE_OF = 5
 CLASS_AVERAGE_OF = 5
 SAVE_DIR = "/home/pobopo/Pictures/misses/"
-INGORE_PRESS = False
-ROCK_HOLD_TIME = 1
+CLICK_DISABLED = True
+SCROLL_DISABLED = True
+CLICK_HOLD_TIME = 1
+SCROLL_HOLD_TIME = 1
 
 # without this shit script slow af
 pg.PAUSE = 0
@@ -47,6 +49,7 @@ def main(show=False):
   prevCls = -1
 
   rockHoldStart = None
+  sciccorsHoldStart = None
   moveDisabled = True
   buttonPressed = False
   missSaved = False
@@ -103,13 +106,25 @@ def main(show=False):
           i += 1
           missSaved = True
 
-        if (detectedCls == -1 or detectedCls == SCISSORS_CLASS):
-          frameText = "ignore"
+        # BRUH
+        if (detectedCls == -1 or prevCls == -1):
+          frameText = "skip"
           pass
-        elif (not INGORE_PRESS):
-          # BRUH
+        elif (detectedCls == PAPER_CLASS):
+          moveDisabled = False
+        elif (detectedCls == SCISSORS_CLASS):
+          moveDisabled = True
+          if (not SCROLL_DISABLED):
+            if (sciccorsHoldStart == None):
+              sciccorsHoldStart = time()
+            elif (time() - sciccorsHoldStart > SCROLL_HOLD_TIME):
+              pg.scroll((cntr[1] - prevCntr[1]) // KOEF)
+              frameText = "scroll"
+        elif (prevCls == SCISSORS_CLASS and prevCls != detectedCls):
+          sciccorsHoldStart = None
+        elif (not CLICK_DISABLED):
           if (prevCls == ROCK_CLASS and prevCls != detectedCls):
-            if (rockHoldStart != None and time() - rockHoldStart <= ROCK_HOLD_TIME):
+            if (rockHoldStart != None and time() - rockHoldStart <= CLICK_HOLD_TIME):
               pg.click()
               moveDisabled = False
               frameText = "click"
@@ -121,7 +136,7 @@ def main(show=False):
             if (rockHoldStart == None):
               rockHoldStart = time()
               moveDisabled = True
-            elif (time() - rockHoldStart > ROCK_HOLD_TIME):
+            elif (time() - rockHoldStart > CLICK_HOLD_TIME):
               pg.mouseDown()
               buttonPressed = True
               moveDisabled = False
@@ -131,8 +146,8 @@ def main(show=False):
           if (moveDisabled):
             frameText = "hold"
 
-          if (not moveDisabled):
-            pg.move(KOEF * (prevCntr[0] - cntr[0]), KOEF * (cntr[1] - prevCntr[1]))
+        if (not moveDisabled):
+          pg.move(KOEF * (prevCntr[0] - cntr[0]), KOEF * (cntr[1] - prevCntr[1]))
             
         prevCntr = cntr
 
