@@ -28,7 +28,7 @@ FRAME_SIZE = (640, 480)
 KOEF = 2 * (pg.resolution()[1] // FRAME_SIZE[1])
 
 def main(show=False):
-  model = YOLO("/home/pobopo/labi/2kurs/ml/web_mouse/yolov8/exp6(n+pe)/weights/best.pt")
+  model = YOLO("/home/pobopo/labi/2kurs/ml/web_mouse/yolov8/exp5(n+)/weights/best.pt")
 
   for (key, name) in model.names.items():
     if (name == "Paper"):
@@ -84,7 +84,8 @@ def main(show=False):
           detectedCls = sum(clsHistory) // CLASS_AVERAGE_OF
 
           box = boxes.xyxy[0].tolist()
-          cntr = (mid(box[0], box[2]), mid(box[1], box[3]))
+          # cntr = (mid(box[0], box[2]), mid(box[1], box[3]))
+          cntr = (int(box[0]), int(box[3]))
           if (cntrHistory == None):
             cntrHistory = [cntr] * (CNTR_AVERAGE_OF - 1)
           elif (len(cntrHistory) >= CNTR_AVERAGE_OF):
