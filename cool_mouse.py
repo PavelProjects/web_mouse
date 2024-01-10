@@ -8,6 +8,7 @@ CLASS_AVERAGE_OF = 5
 
 # without this shit script slow af
 pg.PAUSE = 0
+# this thing disables usless error
 pg.FAILSAFE = False
 
 PAPER_CLASS = 0
@@ -18,7 +19,7 @@ FRAME_SIZE = (640, 480)
 KOEF = 2 * (pg.resolution()[1] // FRAME_SIZE[1])
 
 def main(show=False):
-  model = YOLO("/home/pobopo/labi/2kurs/ml/web_mouse/yolov8/exp4/weights/best.pt")
+  model = YOLO("/home/pobopo/labi/2kurs/ml/web_mouse/yolov8/exp4(m)/weights/best.pt")
 
   cntr = None
   prevCntr = cntr
@@ -80,7 +81,7 @@ def main(show=False):
         if (detectedCls == -1):
           pass
         else:
-          pg.move(KOEF * (prevCntr[0] - cntr[0]), KOEF * (prevCntr[1] - cntr[1]))
+          pg.move(KOEF * (prevCntr[0] - cntr[0]), KOEF * (cntr[1] - prevCntr[1]))
           if (detectedCls in [SCISSORS_CLASS, ROCK_CLASS]):
             if (detectedCls == ROCK_CLASS):
               buttonPressed = "left"
