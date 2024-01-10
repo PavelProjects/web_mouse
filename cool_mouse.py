@@ -5,6 +5,8 @@ import cv2 as cv
 # Average of hand center pos
 CNTR_AVERAGE_OF = 5
 CLASS_AVERAGE_OF = 5
+SAVE_DIR = "/home/pobopo/Pictures/misses/"
+INGORE_PRESS = True
 
 # without this shit script slow af
 pg.PAUSE = 0
@@ -19,7 +21,7 @@ FRAME_SIZE = (640, 480)
 KOEF = 2 * (pg.resolution()[1] // FRAME_SIZE[1])
 
 def main(show=False):
-  model = YOLO("/home/pobopo/labi/2kurs/ml/web_mouse/yolov8/exp4(m)/weights/best.pt")
+  model = YOLO("/home/pobopo/labi/2kurs/ml/web_mouse/yolov8/exp5(n+)/weights/best.pt")
 
   cntr = None
   prevCntr = cntr
@@ -29,6 +31,8 @@ def main(show=False):
   detectedCls = -1
 
   buttonPressed = None
+  missSaved = False
+  i = 0
 
   capture = cv.VideoCapture(0)
   capture.set(cv.CAP_PROP_FRAME_WIDTH, FRAME_SIZE[0])
@@ -66,8 +70,8 @@ def main(show=False):
 
           sumXY = [0, 0]
           for x, y in cntrHistory:
-            sumXY[0] = sumXY[0] + x
-            sumXY[1] = sumXY[1] + y
+            sumXY[0] += + x
+            sumXY[1] += + y
           cntr = (sumXY[0] // CNTR_AVERAGE_OF, sumXY[1] // CNTR_AVERAGE_OF)
 
           if (prevCntr == None):
@@ -78,11 +82,19 @@ def main(show=False):
             cv.rectangle(res_img, (int(box[0]), int(box[1])), (int(box[2]), int(box[3])), (0, 255, 0), 2)
             cv.circle(res_img, cntr, 5, (0, 0, 255), -1)
 
+          missSaved = False
+        elif (SAVE_DIR != None and not missSaved):
+          cv.imwrite(f"{SAVE_DIR}miss{i}.jpg", res_img)
+          i += 1
+          missSaved = True
+
+
         if (detectedCls == -1):
           pass
         else:
           pg.move(KOEF * (prevCntr[0] - cntr[0]), KOEF * (cntr[1] - prevCntr[1]))
-          if (detectedCls in [SCISSORS_CLASS, ROCK_CLASS]):
+          # bad
+          if (not INGORE_PRESS and detectedCls in [SCISSORS_CLASS, ROCK_CLASS]):
             if (detectedCls == ROCK_CLASS):
               buttonPressed = "left"
             elif (detectedCls == SCISSORS_CLASS):
@@ -100,12 +112,14 @@ def main(show=False):
           if key == ord("q"):
               break
       except KeyboardInterrupt:
-        print("Leaving")
         break
   finally:
+    print("Leaving")
+    if (SAVE_DIR != None):
+      print(f"Saved {i} misses")
     capture.release()
-    if (buttonPressed != None):
-      pg.mouseUp(button=buttonPressed)
+    pg.mouseUp()
+    pg.mouseUp(button="right")
 
 def mid(p1, p2):
   return int((p2 - p1) // 2 + p1)
