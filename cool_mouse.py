@@ -3,11 +3,12 @@ import pyautogui as pg
 import cv2 as cv
 from time import time
 
-MODEL_CONF = 0.5
+MODEL_CONF = 0.25
 # Average of hand center pos
-CNTR_AVERAGE_OF = 5
+CNTR_AVERAGE_OF = 3
 CLASS_AVERAGE_OF = 5
 SAVE_DIR = "/home/pobopo/Pictures/misses/"
+
 CLICK_DISABLED = True
 SCROLL_DISABLED = True
 CLICK_HOLD_TIME = 1
@@ -84,7 +85,8 @@ def main(show=False):
           detectedCls = sum(clsHistory) // CLASS_AVERAGE_OF
 
           box = boxes.xyxy[0].tolist()
-          # cntr = (mid(box[0], box[2]), mid(box[1], box[3]))
+          # cntr runs away when u change hand size
+          # cntr = (mid(box[0], box[2]), mid(box[1], box[3])) 
           cntr = (int(box[0]), int(box[3]))
           if (cntrHistory == None):
             cntrHistory = [cntr] * (CNTR_AVERAGE_OF - 1)
