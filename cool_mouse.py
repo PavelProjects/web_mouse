@@ -29,7 +29,7 @@ FRAME_SIZE = (640, 480)
 KOEF = 2 * (pg.resolution()[1] // FRAME_SIZE[1])
 
 def main(show=False):
-  model = YOLO("/home/pobopo/labi/2kurs/ml/web_mouse/yolov8/exp5(n+)/weights/best.pt")
+  model = YOLO("/home/pobopo/labi/2kurs/ml/web_mouse/yolov8/exp7(n+pe)/weights/best.pt")
 
   for (key, name) in model.names.items():
     if (name == "Paper"):
