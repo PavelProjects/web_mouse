@@ -14,7 +14,7 @@ SCROLL_DISABLED = True
 CLICK_HOLD_TIME = 1
 SCROLL_HOLD_TIME = 1
 
-# without this shit script slow af
+# without this script slow af
 pg.PAUSE = 0
 # this thing disables usless error
 pg.FAILSAFE = False
